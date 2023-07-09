@@ -1,0 +1,10 @@
+<?php
+session_start();
+unset($_SESSION['adminUsername']);
+unset($_SESSION['adminPassword']);
+unset($_SESSION['adminFullname']);
+unset($_SESSION['adminId']);
+session_regenerate_id(true);
+header('Location:index.php');
+exit();
+?>

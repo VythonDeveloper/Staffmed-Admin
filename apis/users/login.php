@@ -28,6 +28,14 @@ if($mandatoryVal){
             $res = $conn->query("Select * from users where tokenId = '$newToken' and phone = '$phone' and password = '$password'");
             if($res->num_rows > 0){
                 $row = $res->fetch_assoc();
+                $adrRes = $conn->query("Select * from address where userId = '".$row['id']."'");
+                $adrArray = array();
+                if($adrRes->num_rows > 0){
+                    while($adrRow = $adrRes->fetch_assoc()){
+                        $adrArray[count($adrArray)] = $adrRow;
+                    }
+                }
+                $row['addresses'] = $adrArray;
                 $processStatus["error"] = false;
                 $processStatus["message"] = "Login Successful";
                 $processStatus["response"] = $row;

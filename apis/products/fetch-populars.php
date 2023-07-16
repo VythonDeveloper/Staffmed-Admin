@@ -14,24 +14,18 @@ $mandatoryVal = true;
 if($mandatoryVal){
     // Validation Part
     if($processStatus["error"] == false){
-        $res = $conn->query("Select * from achievers order by RAND()");
+        $res = $conn->query("Select * from medicines order by RAND() LIMIT 10");
         $serverData = array();
         if($res->num_rows > 0){
             while($row = $res->fetch_assoc()){
+                $row['discountedPrice'] = $row['price'] - ($row['price'] * $row['discount']/100);
                 $serverData[count($serverData)] = $row;
             }
-            $processStatus["error"] = false;
-            $processStatus["message"] = "Fetched App Achievers";
-            $processStatus['response'] = json_encode($serverData);
-        }else{
-            // Error Part
-            $processStatus["error"] = true;
-            $processStatus["message"] = "Database Query Error.";
         }
-    } else{
-        // Error Part
-        $processStatus["error"] = true;
-        $processStatus["message"] = "Unauthorized User. Action Denied";
+        $processStatus["error"] = false;
+        $processStatus["message"] = "Fetched Popular Products";
+        $processStatus['response'] = $serverData;
+        
     }
 } else{
     // Error Part

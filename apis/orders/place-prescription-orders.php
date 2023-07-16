@@ -31,24 +31,22 @@ function getSafeValue($value){
 $processStatus["error"] = false;
 $processStatus["message"] = "No Error";
 
-$mandatoryVal = isset($_POST['userId']) && isset($_POST['amount']) && isset($_POST['productArray']) && isset($_POST['quantityArray']) && isset($_POST['orderTimeSlot']) && isset($_POST['orderDateRange']) && isset($_POST['shippingAddress']);
+$mandatoryVal = isset($_POST['userId']) && isset($_POST['prescriptionArray'])  && isset($_POST['orderTimeSlot']) && isset($_POST['orderDateRange']) && isset($_POST['shippingAddress']);
 
 if($mandatoryVal){
     $userId = getSafeValue($_POST['userId']);
-    $amount = getSafeValue($_POST['amount']);
-    $productArray = json_decode($_POST['productArray'], true);
-    $quantityArray = json_decode($_POST['quantityArray'], true);
+    $prescriptionArray = json_decode($_POST['prescriptionArray'], true);
     $orderTimeSlot = getSafeValue($_POST['orderTimeSlot']);
     $orderDateRange = getSafeValue($_POST['orderDateRange']);
     $shippingAddress = getSafeValue($_POST['shippingAddress']);
-    $referenceId = "NPOD".substr(str_shuffle(str_repeat($x = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(6 / strlen($x)))), 1, 6);
+    $referenceId = "PROD".substr(str_shuffle(str_repeat($x = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(6 / strlen($x)))), 1, 6);
     
     // Validation Part
-    if($processStatus["error"] == false && isAuthorized() && count($productArray) == count($quantityArray)){
-        $conn->query("Insert into orders set
+    if($processStatus["error"] == false && isAuthorized()){
+        $conn->query("Insert into prescription_orders set
         refId = '$referenceId',
         userId = '$userId',
-        amount = '$amount',
+        amount = '0.0',
         timeSlot = '$orderTimeSlot',
         dateRange = '$orderDateRange',
         shippingAddress = '$shippingAddress',
@@ -58,26 +56,24 @@ if($mandatoryVal){
         ");
 
         if($conn->affected_rows > 0){
-            $orderId = $conn->insert_id;
+            $presOrderId = $conn->insert_id;
             $processStatus["referenceId"] = $referenceId;
             
             $sql = '';
-            for($index = 0; $index < count($productArray); $index++){
-                $sql .= "Insert into ordered_products set
-                orderId = '$orderId',
-                productId = '".$productArray[$index]['id']."',
-                salePrice = '".$productArray[$index]['discountedPrice']."',
-                quantity = '".$quantityArray[$productArray[$index]['id']]."'
+            for($index = 0; $index < count($prescriptionArray); $index++){
+                $sql .= "Insert into prescriptions set
+                presId = '$presOrderId',
+                image = '".$prescriptionArray[$index]."'
                 ;";
             }
             
             if ($conn->multi_query($sql) === TRUE) {
-                $conn->query("Delete from cart where userId = '$userId'");
                 $processStatus["error"] = false;
-                $processStatus["message"] = "Order Placed. Please pay amount to confirm the order";
+                $processStatus["message"] = "Order Placed. Please expect a call from our Pharmacy Team";
             } else {
                 $processStatus["error"] = true;
                 $processStatus["message"] = "Try again after sometime";
+                $processStatus["sql"] = $sql;
             }
         } else{
             $processStatus["error"] = true;

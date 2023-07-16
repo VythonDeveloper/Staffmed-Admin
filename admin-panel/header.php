@@ -57,6 +57,12 @@ elseif($curr_path == 'settings' || $curr_path == 'settings.php'){
                 line-clamp: 1; 
                 -webkit-box-orient: vertical;
             }
+            @media print {
+                /* Hide the print and download buttons when printing */
+                .no-print {
+                    display: none;
+                }
+            }
         </style>
     </head>
     <body>
@@ -151,21 +157,21 @@ elseif($curr_path == 'settings' || $curr_path == 'settings.php'){
                             <span class="flex-1 ml-3 whitespace-nowrap">Manage Customers</span>
                         </a>
                     </li>
-                    <li>
+                    <!-- <li>
                         <a href="manage-transactions.php" class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 <?php echo $pageName == 'Manage Transactions' ? 'bg-gray-700' : '';?>">
                             <svg aria-hidden="true" class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                             </svg>
                             <span class="flex-1 ml-3 whitespace-nowrap">Manage Transactions</span>
                         </a>
-                    </li>
-                    <hr>
-                    <li>
+                    </li> -->
+                    <!-- <hr> -->
+                    <!-- <li>
                         <a href="settings.php" class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 <?php echo $pageName == 'Settings' ? 'bg-gray-700' : '';?>">
                             <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="h-6 w-6" style="stroke-width: var(--grid-item-icon-stroke-width); transform: scale(var(--grid-item-icon-scale));"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"></path></svg>
                             <span class="ml-3">Settings</span>
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </aside>

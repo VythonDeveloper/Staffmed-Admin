@@ -82,6 +82,94 @@ function getOrderDetails($orderId){
 	return $serverData;
 }
 
+function getCustomerList($pageNo, $searchKey){
+	global $conn;
+	$dataLimit = 10;
+	$offsetData = $pageNo * $dataLimit;
+	$serverData = Array();
+	if(empty($searchKey)){
+		$sqlQuery = "Select * from users order by id desc limit $dataLimit offset $offsetData;";
+	} else{
+		$sqlQuery = "Select * from users where (soundex('$searchKey') = soundex(fullname)) OR (fullname LIKE CONCAT('%', '$searchKey', '%')) or (phone LIKE CONCAT('%', '$searchKey', '%')) order by id desc limit $dataLimit offset $offsetData;";
+	}
+	$res = $conn->query($sqlQuery);
+	if($res->num_rows > 0){
+		while($row = $res->fetch_assoc()){
+			$serverData[count($serverData)] = $row;
+		}
+	}
+	return $serverData;
+}
+
+function getPrescriptionOrdersList($pageNo, $searchKey){
+	global $conn;
+	$dataLimit = 10;
+	$offsetData = $pageNo * $dataLimit;
+	$serverData = Array();
+	if(empty($searchKey)){
+		$sqlQuery = "Select us.fullname, us.phone, pod.* from prescription_orders pod inner join users us on pod.userId = us.id order by pod.id desc limit $dataLimit offset $offsetData;";
+	} else{
+		$sqlQuery = "Select * from prescription_orders pod inner join users us on pod.userId = us.id where (soundex('$searchKey') = soundex(pod.refId)) or (pod.refId LIKE CONCAT('%', '$searchKey', '%')) or (soundex('$searchKey') = soundex(pod.shippingAddress)) or (pod.shippingAddress LIKE CONCAT('%', '$searchKey', '%')) order by pod.id desc limit $dataLimit offset $offsetData;";
+	}
+	$res = $conn->query($sqlQuery);
+	if($res->num_rows > 0){
+		while($row = $res->fetch_assoc()){
+			$serverData[count($serverData)] = $row;
+		}
+	}
+	return $serverData;
+}
+
+function getPrescriptionOrderMedicines($presOdId, $searchKey){
+	global $conn;
+	$serverData = Array();
+	if(empty($searchKey)){
+		$sqlQuery = "Select * from prescription_products where presId = '$presOdId' order by id desc";
+	} else{
+		$sqlQuery = "Select * from prescription_products where presId = '$presOdId' and (soundex('$searchKey') = soundex(name)) or (name LIKE CONCAT('%', '$searchKey', '%')) or (soundex('$searchKey') = soundex(company)) or (company LIKE CONCAT('%', '$searchKey', '%')) order by id desc;";
+	}
+	$res = $conn->query($sqlQuery);
+	if($res->num_rows > 0){
+		while($row = $res->fetch_assoc()){
+			$serverData[count($serverData)] = $row;
+		}
+	}
+	return $serverData;
+}
+
+function getPrescriptionDetails($presOdId){
+	global $conn;
+	$serverData = Array();
+	$res = $conn->query("Select us.fullname, us.phone, prod.* from prescription_orders prod inner join users us on prod.userId = us.id where prod.id = '$presOdId'");
+	if($res->num_rows > 0){
+		$odRow = $res->fetch_assoc();
+
+		// Prescription
+		$presRes = $conn->query("Select * from prescriptions where presId = '".$odRow['id']."'");
+		$presArray = Array();
+		if($presRes->num_rows > 0){
+			while($presRow = $presRes->fetch_assoc()){
+				$presArray[count($presArray)] = $presRow;
+			}
+		}
+		$odRow['prescriptions'] = $presArray;
+
+		// Medicines
+		$medRes = $conn->query("Select * from prescription_products where presId = '".$odRow['id']."'");
+		$medArray = Array();
+		if($medRes->num_rows > 0){
+			while($medRow = $medRes->fetch_assoc()){
+				$medArray[count($medArray)] = $medRow;
+			}
+		}
+		$odRow['medicines'] = $medArray;
+
+		// Final and Submit
+		$serverData = $odRow;
+	}
+	return $serverData;
+}
+
 function getOrdersGraphData($restaurantId){
 	global $conn;
 	$serverData = Array();

@@ -170,10 +170,31 @@ function getPrescriptionDetails($presOdId){
 	return $serverData;
 }
 
-function getOrdersGraphData($restaurantId){
+function getMonthlyOrdersStats(){
 	global $conn;
 	$serverData = Array();
-	$res = $conn->query("Select * from booking_orders where restaurantId = '$restaurantId' order by id desc");
+	$res = $conn->query("Select month, sum(ordersPlaced) as ordersPlaced from (
+		Select monthname(date) as month, month(date) as monthInt, count(*) as ordersPlaced from orders as tb1 group by monthname(date)
+		union all 
+		Select monthname(date) as month, month(date) as monthInt, count(*) as ordersPlaced from prescription_orders as tb2 group by monthname(date)
+	) as tb3 
+	group by month order by monthInt desc limit 6");
+	if($res->num_rows > 0){
+		while($row = $res->fetch_assoc()){
+			$serverData[count($serverData)] = $row;
+		}
+	}
+	return $serverData;
+}
+
+function getMonthlyEarningStats(){
+	global $conn;
+	$serverData = Array();
+	$res = $conn->query("Select month, sum(earning) as totalEarning from (
+		Select monthname(date) as month, month(date) as monthInt, sum(amount) as earning from orders as tb1 where isPaid = 'Approved' group by monthname(date)
+		union ALL
+		Select monthname(date) as month, month(date) as monthInt, sum(amount) as earning from prescription_orders as tb2 where isPaid = 'Approved' group by monthname(date)
+	) as tb3 group by month order by monthInt desc limit 7");
 	if($res->num_rows > 0){
 		while($row = $res->fetch_assoc()){
 			$serverData[count($serverData)] = $row;

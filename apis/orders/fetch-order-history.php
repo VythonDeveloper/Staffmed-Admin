@@ -49,7 +49,7 @@ if($mandatoryVal){
                     }
                 }
                 
-                $row["orderedProducts"] = $opArray;
+                $row["medicines"] = $opArray;
                 $serverData[count($serverData)] = $row;
             }
         }

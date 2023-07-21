@@ -105,7 +105,7 @@ if(isset($_POST['signin'])){
                             </div>
                         </div>
                         <div class="order-first hidden h-full bg-fill w-full lg:block">
-                            <img class="object-cover h-full w-full bg-cover rounded-l-lg" src="https://source.unsplash.com/240x150/?medical,chemist,druggist" alt="" />
+                            <img class="object-contain h-full w-full bg-contain rounded-l-lg" src="./assets/images/favicon.png" alt="" />
                         </div>
                     </div>
                 </div>

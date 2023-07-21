@@ -77,8 +77,8 @@ elseif($curr_path == 'settings' || $curr_path == 'settings.php'){
                             </svg>
                         </button>
                         <a href="dashboard.php" class="flex ml-2 md:mr-24">
-                            <img src="./assets/images/favicon.png" class="h-8 mr-3" alt="FlowBite Logo" />
-                            <span class="self-center text-xl font-semibold sm:text-2xl dark:text-white"><?php echo Site_Name;?></span>
+                            <img src="./assets/images/logo-banner.png" class="h-8 mr-3" alt="FlowBite Logo" />
+                            <!-- <span class="self-center text-xl font-semibold sm:text-2xl dark:text-white"><?php echo Site_Name;?></span> -->
                         </a>
                     </div>
                     <div class="flex items-center">

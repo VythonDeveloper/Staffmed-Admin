@@ -70,9 +70,8 @@ if($mandatoryVal){
                 quantity = '".$quantityArray[$productArray[$index]['id']]."'
                 ;";
             }
-            
+            $sql .= "Delete from cart where userId = '$userId';";
             if ($conn->multi_query($sql) === TRUE) {
-                $conn->query("Delete from cart where userId = '$userId'");
                 $processStatus["error"] = false;
                 $processStatus["message"] = "Order Placed. Please pay amount to confirm the order";
             } else {
